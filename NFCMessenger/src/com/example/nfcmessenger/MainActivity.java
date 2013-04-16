@@ -15,13 +15,15 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.Log;
 import android.view.Menu;
-import android.widget.TextView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 
 public class MainActivity extends Activity {
 	private NfcAdapter mAdapter;
 	private PendingIntent mPendingIntent;
 	private IntentFilter[] mFilters;
     private String[][] mTechLists;
+    private NfcXmlParser xmlParser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,6 +34,7 @@ public class MainActivity extends Activity {
                 new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
         
         mAdapter = NfcAdapter.getDefaultAdapter(this);
+        xmlParser = new NfcXmlParser(this);
         
         NdefMessage mMessage = new NdefMessage(NdefRecord.createUri("http://www.android.com"));
         mAdapter.setNdefPushMessage(mMessage, this);
@@ -99,7 +102,10 @@ public class MainActivity extends Activity {
 					e.printStackTrace();
 				}
         		Log.i("NFC", "Message payload: " + payload);
-        		((TextView)findViewById(R.id.textView1)).setText(payload);
+        		// Use the XML Parser to extract the layout from the XML
+        		LinearLayout xmlLayoutBase = xmlParser.processXml(payload);
+        		// Then add it to the view root.
+        		((RelativeLayout)(findViewById(R.id.layoutRoot))).addView(xmlLayoutBase);
         	}
         }
         else

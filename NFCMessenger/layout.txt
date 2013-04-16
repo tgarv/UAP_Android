@@ -1,0 +1,13 @@
+<TextView>
+	<id>1</id>
+	<textsize>30</textsize>
+	<textcolor>#AA6600</textcolor>
+	<text>
+		Hello! Enter your email address to sign up for our newsletter.
+	</text>
+</TextView>
+<EditText>
+	<id>2</id>
+	<textsize>24</textsize>
+	<text>email</text>
+</EditText>
