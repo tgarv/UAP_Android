@@ -42,7 +42,7 @@ public class MainActivity extends Activity {
         IntentFilter discovery=new IntentFilter(NfcAdapter.ACTION_TAG_DISCOVERED);
         mWriteTagFilters = new IntentFilter[] { discovery };
         
-        ((EditText) findViewById(R.id.editText1)).setText("<foo>text='hello, world!' id='1'</foo>");
+        ((EditText) findViewById(R.id.editText1)).setText("<TextView><id>1</id><textsize>30</textsize><textcolor>#AA6600</textcolor><text>Hello! Enter your email address to sign up for our newsletter.</text></TextView><EditText><id>2</id><textsize>24</textsize><text>email</text></EditText>");
     }
 
     @Override
