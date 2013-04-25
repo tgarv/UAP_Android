@@ -42,7 +42,75 @@ public class MainActivity extends Activity {
         IntentFilter discovery=new IntentFilter(NfcAdapter.ACTION_TAG_DISCOVERED);
         mWriteTagFilters = new IntentFilter[] { discovery };
         
-        ((EditText) findViewById(R.id.editText1)).setText("<TextView><id>1</id><textsize>30</textsize><textcolor>#AA6600</textcolor><text>Hello! Enter your email address to sign up for our newsletter.</text></TextView><EditText><id>2</id><textsize>24</textsize><text>email</text></EditText>");
+        String layout1 = "" +
+        	"<TextView>" +
+    			"<id>1</id>" +
+    			"<textsize>30</textsize>" +
+    			"<textcolor>#009999</textcolor>" +
+    			"<text>Welcome to the sample form!</text>" +
+    		"</TextView>" +
+    		"<TextView>" +
+    			"<id>2</id>" +
+    			"<textsize>24</textsize>" +
+    			"<textcolor>#AA6600</textcolor>" +
+    			"<text>Hello! Enter your email address to sign up for our newsletter.</text>" +
+    		"</TextView>" +
+    		"<EditText>" +
+    			"<id>3</id>" +
+    			"<textsize>24</textsize>" +
+    			"<text>email</text>" +
+    		"</EditText>" +
+    		"<TextView>" +
+    			"<id>4</id>" +
+    			"<textsize>24</textsize>" +
+    			"<textcolor>#000000</textcolor>" +
+    			"<text>Enter some other information here to submit it.</text>" +
+    		"</TextView>" +
+    		"<EditText>" +
+    			"<id>5</id>" +
+    			"<textsize>24</textsize>" +
+    			"<text>other stuff</text>" +
+    		"</EditText>";
+        
+        String layout2 = "" +
+            	"<TextView>" +
+        			"<id>1</id>" +
+        			"<textsize>42</textsize>" +
+        			"<textcolor>#3333FF</textcolor>" +
+        			"<text>Welcome to AirlineX self-service checkin!</text>" +
+        		"</TextView>" +
+        		"<TextView>" +
+        			"<id>2</id>" +
+        			"<textsize>30</textsize>" +
+        			"<textcolor>#3333FF</textcolor>" +
+        			"<text>Enter your full name:</text>" +
+        		"</TextView>" +
+        		"<EditText>" +
+        			"<id>3</id>" +
+        			"<textsize>30</textsize>" +
+        			"<textcolor>#000000</textcolor>" +
+        			"<text>Sample T. Passenger</text>" +
+        		"</EditText>" +
+        		"<TextView>" +
+        			"<id>4</id>" +
+        			"<textsize>24</textsize>" +
+        			"<textcolor>#3333FF</textcolor>" +
+        			"<text>Enter the confirmation code (check your email)</text>" +
+        		"</TextView>" +
+        		"<EditText>" +
+        			"<id>5</id>" +
+        			"<textsize>24</textsize>" +
+        			"<textcolor>#000000</textcolor>" +
+        			"<text>confirmation code</text>" +
+        		"</EditText>" +
+	        	"<TextView>" +
+	    			"<id>6</id>" +
+	    			"<textsize>24</textsize>" +
+	    			"<textcolor>#000000</textcolor>" +
+	    			"<text>Tap your device to the reader to continue</text>" +
+	    		"</TextView>";
+        
+        ((EditText) findViewById(R.id.editText1)).setText(layout2);
     }
 
     @Override
