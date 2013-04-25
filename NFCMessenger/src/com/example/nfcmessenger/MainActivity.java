@@ -15,6 +15,7 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
@@ -71,6 +72,17 @@ public class MainActivity extends Activity {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.activity_main, menu);
         return true;
+    }
+    
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item){
+    	switch(item.getItemId()){
+    		case R.id.responsewriter:
+    			Intent intent = new Intent(this, ResponseWriter.class);
+    			intent.putExtra("response_text", "right text");
+    			startActivity(intent);
+    	}
+		return false;
     }
     
     @Override

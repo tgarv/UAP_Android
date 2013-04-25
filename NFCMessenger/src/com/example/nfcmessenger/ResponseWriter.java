@@ -1,4 +1,4 @@
-package com.example.nfcwriter;
+package com.example.nfcmessenger;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -17,21 +17,20 @@ import android.nfc.tech.NdefFormatable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
-import android.widget.EditText;
 import android.widget.Toast;
 
-// Much of this code is borrowed from http://tapintonfc.blogspot.com/2012/07/the-above-footage-from-our-nfc-workshop.html
-public class MainActivity extends Activity {
-    private NfcAdapter mNfcAdapter;  
-    private IntentFilter[] mWriteTagFilters;  
-    private PendingIntent mNfcPendingIntent;    
+public class ResponseWriter extends Activity {
+	private NfcAdapter mNfcAdapter;
+    private IntentFilter[] mWriteTagFilters;
+    private PendingIntent mNfcPendingIntent;
     private Context context;
+    private String pendingResponseText;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_response_writer);
+		
         context = getApplicationContext();
         mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
         mNfcPendingIntent = PendingIntent.getActivity(this, 0, new Intent(this,  
@@ -42,84 +41,17 @@ public class MainActivity extends Activity {
         IntentFilter discovery=new IntentFilter(NfcAdapter.ACTION_TAG_DISCOVERED);
         mWriteTagFilters = new IntentFilter[] { discovery };
         
-        String layout1 = "" +
-        	"<TextView>" +
-    			"<id>1</id>" +
-    			"<textsize>30</textsize>" +
-    			"<textcolor>#009999</textcolor>" +
-    			"<text>Welcome to the sample form!</text>" +
-    		"</TextView>" +
-    		"<TextView>" +
-    			"<id>2</id>" +
-    			"<textsize>24</textsize>" +
-    			"<textcolor>#AA6600</textcolor>" +
-    			"<text>Hello! Enter your email address to sign up for our newsletter.</text>" +
-    		"</TextView>" +
-    		"<EditText>" +
-    			"<id>3</id>" +
-    			"<textsize>24</textsize>" +
-    			"<text>email</text>" +
-    		"</EditText>" +
-    		"<TextView>" +
-    			"<id>4</id>" +
-    			"<textsize>24</textsize>" +
-    			"<textcolor>#000000</textcolor>" +
-    			"<text>Enter some other information here to submit it.</text>" +
-    		"</TextView>" +
-    		"<EditText>" +
-    			"<id>5</id>" +
-    			"<textsize>24</textsize>" +
-    			"<text>other stuff</text>" +
-    		"</EditText>";
-        
-        String layout2 = "" +
-            	"<TextView>" +
-        			"<id>1</id>" +
-        			"<textsize>42</textsize>" +
-        			"<textcolor>#3333FF</textcolor>" +
-        			"<text>Welcome to AirlineX self-service checkin!</text>" +
-        		"</TextView>" +
-        		"<TextView>" +
-        			"<id>2</id>" +
-        			"<textsize>30</textsize>" +
-        			"<textcolor>#3333FF</textcolor>" +
-        			"<text>Enter your full name:</text>" +
-        		"</TextView>" +
-        		"<EditText>" +
-        			"<id>3</id>" +
-        			"<textsize>30</textsize>" +
-        			"<textcolor>#000000</textcolor>" +
-        			"<text>Sample T. Passenger</text>" +
-        		"</EditText>" +
-        		"<TextView>" +
-        			"<id>4</id>" +
-        			"<textsize>24</textsize>" +
-        			"<textcolor>#3333FF</textcolor>" +
-        			"<text>Enter the confirmation code (check your email)</text>" +
-        		"</TextView>" +
-        		"<EditText>" +
-        			"<id>5</id>" +
-        			"<textsize>24</textsize>" +
-        			"<textcolor>#000000</textcolor>" +
-        			"<text>confirmation code</text>" +
-        		"</EditText>" +
-	        	"<TextView>" +
-	    			"<id>6</id>" +
-	    			"<textsize>24</textsize>" +
-	    			"<textcolor>#000000</textcolor>" +
-	    			"<text>Tap your device to the reader to continue</text>" +
-	    		"</TextView>";
-        
-        ((EditText) findViewById(R.id.editText1)).setText(layout2);
-    }
+        Bundle b = getIntent().getExtras();
+        pendingResponseText = b.getString("response_text");
+	}
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.activity_main, menu);
-        return true;
-    }
-    
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		// Inflate the menu; this adds items to the action bar if it is present.
+		getMenuInflater().inflate(R.menu.activity_response_writer, menu);
+		return true;
+	}
+	
 	@Override
 	protected void onResume() {
 		super.onResume();
@@ -152,7 +84,7 @@ public class MainActivity extends Activity {
 				// check if tag is writable (to the extent that we can
 				if (writableTag(detectedTag)) {
 					// writeTag here
-					String text = ((EditText) findViewById(R.id.editText1)).getText().toString();
+					String text = getPendingResponseText();
 					WriteResponse wr = writeTag(getNdefMessage(text, true), detectedTag);
 					String message = (wr.getStatus() == 1 ? "Success: " : "Failed: ") + wr.getMessage();
 					Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
@@ -164,7 +96,7 @@ public class MainActivity extends Activity {
 			}
 		}
 	}
-    
+	
 	/**
 	 * Given and message and an NFC tag, tries to write the message in NDEF format to the tag. Does not write
 	 * if the message is too large for the tag or if the tag doesn't support NDEF.
@@ -214,7 +146,7 @@ public class MainActivity extends Activity {
 			return new WriteResponse(0, responseText);
 		}
 	}
-
+	
 	/**
 	 * Response returned by writeTag, indicates the status (success/failure) of the write (1 for success, 0
 	 * for failure) and contains a response message from the write.
@@ -238,7 +170,33 @@ public class MainActivity extends Activity {
 			return message;
 		}
 	}
+	
+	/**
+	 * Constructs an NDEF message from the given text
+	 * @param text the text that the NDEF message should contain
+	 * @param addAAR whether we want to attach an Android Application Record to this NDEF message
+	 * @return the constructed NdefMessage
+	 */
+	private NdefMessage getNdefMessage(String text, boolean addAAR) {
+		byte[] textBytes = text.getBytes(Charset.forName("US-ASCII"));
+		byte[] payload = new byte[textBytes.length + 1]; // add 1 for the URI
+														// Prefix
+		payload[0] = 0x00; // Set the message prefix to None (can be HTTP (0x01), etc.)
+		System.arraycopy(textBytes, 0, payload, 1, textBytes.length); // appends the text to payload
 
+		NdefRecord rtdUriRecord = new NdefRecord(NdefRecord.TNF_WELL_KNOWN, NdefRecord.RTD_TEXT, new byte[0], payload);
+		if (addAAR) {
+			// note: returns AAR for different app (nfcreadtag)
+			return new NdefMessage(
+					new NdefRecord[] {
+							rtdUriRecord,
+							NdefRecord
+									.createApplicationRecord("com.example.nfcmessenger") });
+		} else {
+			return new NdefMessage(new NdefRecord[] { rtdUriRecord });
+		}
+	}
+	
 	/**
 	 * Checks to see if all of the required technologies are included in techs
 	 * @param techs The technology list to check if all of the required technologies are supported
@@ -288,29 +246,12 @@ public class MainActivity extends Activity {
 		return false;
 	}
 
-	/**
-	 * Constructs an NDEF message from the given text
-	 * @param text the text that the NDEF message should contain
-	 * @param addAAR whether we want to attach an Android Application Record to this NDEF message
-	 * @return the constructed NdefMessage
-	 */
-	private NdefMessage getNdefMessage(String text, boolean addAAR) {
-		byte[] textBytes = text.getBytes(Charset.forName("US-ASCII"));
-		byte[] payload = new byte[textBytes.length + 1]; // add 1 for the URI
-														// Prefix
-		payload[0] = 0x00; // Set the message prefix to None (can be HTTP (0x01), etc.)
-		System.arraycopy(textBytes, 0, payload, 1, textBytes.length); // appends the text to payload
-
-		NdefRecord rtdUriRecord = new NdefRecord(NdefRecord.TNF_WELL_KNOWN, NdefRecord.RTD_TEXT, new byte[0], payload);
-		if (addAAR) {
-			// note: returns AAR for different app (nfcreadtag)
-			return new NdefMessage(
-					new NdefRecord[] {
-							rtdUriRecord,
-							NdefRecord
-									.createApplicationRecord("com.example.nfcmessenger") });
-		} else {
-			return new NdefMessage(new NdefRecord[] { rtdUriRecord });
-		}
+	public String getPendingResponseText() {
+		return pendingResponseText;
 	}
+
+	public void setPendingResponseText(String pendingResponseText) {
+		this.pendingResponseText = pendingResponseText;
+	}
+
 }
